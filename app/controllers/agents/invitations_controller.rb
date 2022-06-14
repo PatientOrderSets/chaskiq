@@ -10,7 +10,7 @@ class Agents::InvitationsController < Devise::InvitationsController
           render json: @token
         end
       end
-      respond_with_navigational(resource)
+      respond_with_navigational(resource) and return
     end
   end
 

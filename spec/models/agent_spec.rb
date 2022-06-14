@@ -22,4 +22,40 @@ RSpec.describe Agent, type: :model do
       expect(agent).to be_present
     end
   end
+
+  describe "password validation" do
+    it "should return a message with missing requirements" do
+      agent = Agent.first
+
+      password = "password"
+      agent.password = password
+      agent.password_confirmation = password
+      result = agent.save
+
+      expect(result).to be_falsey
+      expect(agent.errors).to include(:password)
+      expect(agent.errors.full_messages).to include("Password Complexity requirement not met. Please use: 1 uppercase, 1 digit, 1 special character")
+
+      password = "Password!"
+      agent.password = password
+      agent.password_confirmation = password
+      result = agent.save
+
+      expect(result).to be_falsey
+      expect(agent.errors).to include(:password)
+      expect(agent.errors.full_messages).to include("Password Complexity requirement not met. Please use: 1 digit")
+    end
+
+    it "should return nil when password satisfies requirements" do
+      agent = Agent.first
+
+      password = "Password123!"
+      agent.password = password
+      agent.password_confirmation = password
+      result = agent.save
+
+      expect(result).to be_truthy
+      expect(agent.errors).to be_blank
+    end
+  end
 end

@@ -83,7 +83,7 @@ module UserHandler
     user = Agent.find_or_initialize_by(email:)
     # user.skip_confirmation!
     if user.new_record?
-      user.password = attrs[:password] || Devise.friendly_token[0, 20]
+      user.password = attrs[:password] || Faker::Internet.password(min_length: 10, max_length: 20, mix_case: true, special_characters: true)
       user.save
     end
 

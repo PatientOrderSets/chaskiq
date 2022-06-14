@@ -63,6 +63,8 @@ class Agent < ApplicationRecord
 
   has_one_attached :avatar
 
+  validate :password_complexity
+
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
       user.email = auth.info.email
@@ -161,5 +163,20 @@ class Agent < ApplicationRecord
     rescue StandardError
       nil
     end
+  end
+
+  def password_complexity
+    return if password.blank?
+
+    missing_requirements = []
+
+    missing_requirements << '1 uppercase' unless password =~ /(?=.*?[A-Z])/
+    missing_requirements << '1 lowercase' unless password =~ /(?=.*?[a-z])/
+    missing_requirements << '1 digit' unless password =~ /(?=.*?[0-9])/
+    missing_requirements << '1 special character' unless password =~ /(?=.*?[#?!@$%^&*-])/
+
+    return if missing_requirements.empty?
+
+    errors.add :password, "Complexity requirement not met. Please use: #{missing_requirements.join(", ")}"
   end
 end
