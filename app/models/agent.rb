@@ -29,7 +29,12 @@ class Agent < ApplicationRecord
            foreign_key: :resource_owner_id,
            dependent: :delete_all # or :destroy if you need callbacks
 
-  has_many :roles, dependent: :destroy
+  has_many :auth_identities, dependent: :delete_all
+
+  has_many :roles, dependent: :destroy, class_name: "Role"
+  has_many :agent_teams, through: :roles, class_name: "AgentTeam"
+  has_many :teams, through: :agent_teams
+
   has_many :apps, through: :roles, source: :app
   has_many :owned_apps, class_name: "App",
                         foreign_key: "owner_id",

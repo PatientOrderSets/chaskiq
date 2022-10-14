@@ -12,6 +12,12 @@ module Types
     field :updateAgentRole, mutation: Mutations::Agents::UpdateAgentRole
     field :destroyAgentRole, mutation: Mutations::Agents::DestroyAgentRole
 
+    field :createTeam, mutation: Mutations::Teams::CreateTeam
+    field :updateTeam, mutation: Mutations::Teams::UpdateTeam
+    field :deleteTeam, mutation: Mutations::Teams::DeleteTeam
+    field :addTeamAgent, mutation: Mutations::Teams::AddTeamAgent
+    field :deleteTeamAgent, mutation: Mutations::Teams::DeleteTeamAgent
+
     field :cloneMessage, mutation: Mutations::CloneMessage
 
     field :createDelete, mutation: Mutations::Predicates::CreatePredicate
@@ -57,6 +63,8 @@ module Types
     field :privacyConsent, mutation: Mutations::AppUsers::PrivacyConsent
     field :createAppUser, mutation: Mutations::AppUsers::CreateAppUser
     field :updateAppUser, mutation: Mutations::AppUsers::UpdateAppUser
+    field :mergeContact, mutation: Mutations::AppUsers::MergeContact
+
     field :syncExternalProfile, mutation: Mutations::AppUsers::SyncExternalProfile
     field :createExternalProfile, mutation: Mutations::AppUsers::CreateExternalProfile
     field :updateExternalProfile, mutation: Mutations::AppUsers::UpdateExternalProfile

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_02_235735) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_05_144614) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -49,6 +49,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_02_235735) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "agent_teams", force: :cascade do |t|
+    t.bigint "team_id", null: false
+    t.bigint "role_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["role_id"], name: "index_agent_teams_on_role_id"
+    t.index ["team_id", "role_id"], name: "index_agent_teams_on_team_id_and_role_id", unique: true
+    t.index ["team_id"], name: "index_agent_teams_on_team_id"
   end
 
   create_table "agents", force: :cascade do |t|
@@ -328,6 +338,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_02_235735) do
     t.index ["agent_id"], name: "index_audits_on_agent_id"
     t.index ["app_id"], name: "index_audits_on_app_id"
     t.index ["auditable_type", "auditable_id"], name: "index_audits_on_auditable"
+  end
+
+  create_table "auth_identities", force: :cascade do |t|
+    t.bigint "agent_id", null: false
+    t.string "provider"
+    t.string "uid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agent_id"], name: "index_auth_identities_on_agent_id"
+    t.index ["provider"], name: "index_auth_identities_on_provider"
+    t.index ["uid"], name: "index_auth_identities_on_uid"
   end
 
   create_table "bot_tasks", force: :cascade do |t|
@@ -740,6 +761,19 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_02_235735) do
     t.index ["name"], name: "index_tags_on_name", unique: true
   end
 
+  create_table "teams", force: :cascade do |t|
+    t.bigint "app_id", null: false
+    t.string "name"
+    t.string "slug"
+    t.string "state"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "role"
+    t.index ["app_id"], name: "index_teams_on_app_id"
+    t.index ["role"], name: "index_teams_on_role"
+  end
+
   create_table "visits", force: :cascade do |t|
     t.string "url"
     t.bigint "app_user_id", null: false
@@ -767,6 +801,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_02_235735) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "agent_teams", "roles"
+  add_foreign_key "agent_teams", "teams"
   add_foreign_key "app_package_integrations", "app_packages"
   add_foreign_key "app_package_integrations", "apps"
   add_foreign_key "app_packages", "agents"
@@ -777,6 +813,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_02_235735) do
   add_foreign_key "assignment_rules", "apps"
   add_foreign_key "audits", "agents"
   add_foreign_key "audits", "apps"
+  add_foreign_key "auth_identities", "agents"
   add_foreign_key "bot_tasks", "apps"
   add_foreign_key "campaigns", "apps"
   add_foreign_key "campaigns", "workflows"
@@ -799,5 +836,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_02_235735) do
   add_foreign_key "roles", "agents"
   add_foreign_key "roles", "apps"
   add_foreign_key "taggings", "tags"
+  add_foreign_key "teams", "apps"
   add_foreign_key "workflows", "apps"
 end
