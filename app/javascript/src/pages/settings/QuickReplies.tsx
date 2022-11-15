@@ -324,21 +324,17 @@ function QuickReplies({ app, _update, dispatch }) {
           <div className="w-2/3 relative z-0 p-6 shadow bg-yellow rounded rounded-l-none">
             {quickReply && !quickReply.id && (
               <div className="flex justify-end">
-                <Button
-                  variant="outlined"
-                  className="mr-2"
-                  onClick={handleSave}
-                >
+                <Button variant="success" className="mr-2" onClick={handleSave}>
                   {I18n.t('common.save')}
                 </Button>
-                <Button variant="success">{I18n.t('common.cancel')}</Button>
+                <Button variant="outlined">{I18n.t('common.cancel')}</Button>
               </div>
             )}
 
             {quickReply && quickReply.id && (
               <div className="flex justify-end">
                 <Button
-                  variant="outlined"
+                  variant="success"
                   className="mr-2"
                   onClick={updateQuickReply}
                 >
@@ -441,6 +437,7 @@ class ArticleEditor extends Component<ArticleEditorProps, ArticleEditorState> {
 
     return (
       <TextEditor
+        allowedEditorFeature={() => true}
         campaign={true}
         uploadHandler={this.props.uploadHandler}
         loading={this.isLoading()}

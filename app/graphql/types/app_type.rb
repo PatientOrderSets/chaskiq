@@ -26,6 +26,7 @@ module Types
     field :plan, Types::JsonType, null: true
     field :inbound_email_address, String, null: true
     field :outgoing_email_domain, String, null: true
+    field :sorted_agents, [String], null: true
 
     field :team, Types::TeamType, null: true do
       argument :id, String, required: false
@@ -526,6 +527,16 @@ module Types
       ).result
     end
 
+    field :contact_search_by_profile, Types::ExternalProfileType, null: true do
+      argument :provider, String, required: true, default_value: ""
+      argument :profile_id, String, required: true, default_value: ""
+    end
+
+    def contact_search_by_profile(provider:, profile_id:)
+      authorize! object, to: :can_manage_users?, with: AppPolicy
+      object.external_profiles.find_by(provider: provider, profile_id: profile_id)
+    end
+
     field :agent_search, [Types::AgentType], null: true do
       argument :term, String, required: true, default_value: ""
     end
@@ -687,9 +698,15 @@ module Types
       object.oauth_applications.authorized_for(current_user)
     end
 
+    field :agent_editor_settings, AnyType, null: true
+    field :user_editor_settings, AnyType, null: true
+    field :lead_editor_settings, AnyType, null: true
+
     private
 
     def filter_by_agent(agent_id)
+      return @collection.where(assignee_id: nil) if agent_id == "0"
+
       @collection.where(assignee_id: agent_id)
     end
 

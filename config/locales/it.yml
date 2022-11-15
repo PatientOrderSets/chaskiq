@@ -39,6 +39,8 @@ it:
       de: Tedesco
       ca: Catalano
       zh-CN: Cinese
+      fr: "French"
+      it: "Italian"
     redirecting: Reindirizzamento
     choose_language: Scegli la lingua
     select_language: Seleziona la Lingua
@@ -49,6 +51,7 @@ it:
     leads: Potenziali Clienti
     visitors: Visitatori
     users: Utenti
+    agents: Agenti
     type_message: Scrivi il tuo messaggio
     search_conversations: Ricerca conversazione
     days: Giorni

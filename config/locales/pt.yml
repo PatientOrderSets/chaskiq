@@ -39,6 +39,8 @@ pt:
       de: Alemão
       ca: Catalão
       zh-CN: Chinês
+      fr: "French"
+      it: "Italian"
     redirecting: A redireccionar
     choose_language: Choose Language
     select_language: Selecione o idioma
@@ -49,6 +51,7 @@ pt:
     leads: Contactos
     visitors: Visitante
     users: Usuários
+    agents: Agentes
     type_message: Type your message
     search_conversations: Pesquisar conversas
     days: Dias

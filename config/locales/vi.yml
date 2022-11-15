@@ -39,6 +39,8 @@ vi:
       de: Tiếng Đức
       ca: Tiếng Bun-ga-ry
       zh-CN: Tiếng Trung
+      fr: "French"
+      it: "Italian"
     redirecting: Đang chuyển hướng
     choose_language: Chọn ngôn ngữ
     select_language: Chọn ngôn ngữ
@@ -49,6 +51,7 @@ vi:
     leads: Những khách hàng tiềm năng
     visitors: Người truy cập
     users: Người dùng
+    agents: Agents
     type_message: Nhập tin nhắn của bạn
     search_conversations: Tìm kiếm cuộc trò chuyện
     days: Ngày
