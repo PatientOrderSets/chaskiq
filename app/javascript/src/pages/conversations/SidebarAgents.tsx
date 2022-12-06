@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Avatar from '@chaskiq/components/src/components/Avatar';
 import Tooltip from 'rc-tooltip';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import LayoutDefinitions from '../../layout/layoutDefinitions';
 import {
   DownArrow,
   FolderIcon,
@@ -35,15 +36,13 @@ const getItemStyle = (isDragging, draggableStyle) => ({
   ...draggableStyle,
 });
 
-function SidebarAgents({ app, dispatch, conversations }) {
+function SidebarAgents({ app, dispatch, conversations, current_user }) {
   const [counts, setCounts] = useState(null);
   const [agents, setAgents] = useState([]);
   const [tagCounts, setTagCounts] = useState(null);
   const [expandedFilters, setExpandedFilters] = useState(false);
-  const [
-    conversationsChannelsCounts,
-    setConversationsChannelsCounts,
-  ] = useState(null);
+  const [conversationsChannelsCounts, setConversationsChannelsCounts] =
+    useState(null);
 
   useEffect(() => {
     getCounts();
@@ -57,7 +56,9 @@ function SidebarAgents({ app, dispatch, conversations }) {
         success: (data) => {
           setCounts(data.app.conversationsCounts);
           setTagCounts(data.app.conversationsTagCounts);
-          setAndReorderAgents(data.app.agents);
+          setAndReorderAgents(
+            data.app.agents.filter((o) => o.id !== current_user.id)
+          );
           setConversationsChannelsCounts(data.app.conversationsChannelsCounts);
         },
         error: () => {},
@@ -259,7 +260,16 @@ function SidebarAgents({ app, dispatch, conversations }) {
           count={counts[''] || '0'}
           active={false}
           filterHandler={filterAgent}
-          label={null}
+          label={I18n.t(`conversations.menu.unassigned`)}
+        />,
+        <ListItem
+          key={'assigned_to_me'}
+          agent={current_user}
+          count={counts[current_user?.id] || '0'}
+          active={current_user.id == counts[current_user?.id]}
+          icon={null}
+          filterHandler={filterAgent}
+          label={I18n.t(`conversations.menu.assigned_to_me`)}
         />,
       ]}
 
@@ -446,51 +456,44 @@ function ListItem({
     if (agent) {
       option = active ? null : agent;
     }
-    if (label) {
+    if (label && !agent) {
       option = active ? null : label;
     }
     filterHandler(option);
   }
+
+  const layout = LayoutDefinitions();
 
   return (
     <a
       href="#"
       onClick={toggleFilter}
       className={`
-      mt-1 group flex items-center px-3 py-2 text-sm
-      leading-5 font-medium 
-      text-gray-600
-      dark:text-gray-50
-      hover:text-gray-900
-      dark:hover:text-gray-100
-      rounded-md 
-      hover:bg-gray-50 
-      dark:hover:bg-gray-800 
-      focus:outline-none 
-      focus:text-gray-900
-      transition ease-in-out duration-150 
-      ${active ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
+      ${layout.mainSidebar.buttons.defaultClass}
+      ${active ? layout.mainSidebar.buttons.activeClass : ''}`}
     >
       {!agent && icon}
 
+      {agent && icon}
+
       {!agent && !icon && <FolderIcon className="-ml-1 mr-3" />}
 
-      {agent && (
+      {agent && !icon && (
         <div className="flex-shrink-0 -ml-1 mr-3 h-6 w-6 text-gray-400 group-focus:text-gray-500 transition ease-in-out duration-150">
           <Avatar size={6} src={agent.avatarUrl} />
         </div>
       )}
 
-      {agent && (
+      {agent && !label && (
         <Tooltip placement="bottom" overlay={agent.name || agent.email}>
           <span className="truncate">{agent.name || agent.email}</span>
         </Tooltip>
       )}
 
-      {!agent && (
-        <span className="truncate">
-          {label || I18n.t('conversations.menu.unassigned')}
-        </span>
+      {label && (
+        <Tooltip placement="bottom" overlay={label}>
+          <span className="truncate">{label}</span>
+        </Tooltip>
       )}
 
       {count && (
@@ -509,10 +512,11 @@ function ListItem({
 }
 
 function mapStateToProps(state) {
-  const { app, conversations } = state;
+  const { app, conversations, current_user } = state;
   return {
     conversations,
     app,
+    current_user,
   };
 }
 
